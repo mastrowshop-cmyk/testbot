@@ -1,67 +1,946 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📦 Доставка Якутск</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
         body {
-            font-family: -apple-system, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
+        
         .container {
-            max-width: 500px;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
-            padding: 25px;
+            padding: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        h1 { color: #333; text-align: center; margin-bottom: 20px; }
-        .input-group { display: flex; gap: 10px; margin: 20px 0; }
-        input { flex: 1; padding: 15px; border: 2px solid #ddd; border-radius: 12px; }
-        button { padding: 15px; background: #667eea; color: white; border: none; border-radius: 12px; }
+        
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .user-info {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        /* Вкладки */
+        .tabs {
+            display: flex;
+            background: #f1f3f4;
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 15px;
+            cursor: pointer;
+            border-radius: 10px;
+            font-weight: 500;
+            white-space: nowrap;
+            min-width: 80px;
+        }
+        
+        .tab.active {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Контент вкладок */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Карточки */
+        .card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        /* Формы */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        
+        input:focus, select:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        
+        /* Кнопки */
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Списки */
+        .list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .list-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            float: right;
+        }
+        
+        .status-waiting {
+            background: #FF9800;
+            color: white;
+        }
+        
+        .status-ready {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .status-china {
+            border-left-color: #f44336;
+        }
+        
+        .status-ussuriysk {
+            border-left-color: #2196F3;
+        }
+        
+        .status-yakutsk {
+            border-left-color: #4CAF50;
+        }
+        
+        /* Уведомления */
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        
+        .alert-success {
+            background: #e8f5e9;
+            color: #2E7D32;
+            border-left: 5px solid #4CAF50;
+        }
+        
+        .alert-error {
+            background: #ffebee;
+            color: #d32f2f;
+            border-left: 5px solid #f44336;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                min-width: 70px;
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            button {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📦 Доставка Якутск</h1>
-        <div id="userInfo">Загрузка...</div>
-        
-        <div class="input-group">
-            <input type="text" id="trackInput" placeholder="Трек-номер">
-            <button onclick="search()">🔍 Найти</button>
+        <!-- Шапка -->
+        <div class="header">
+            <h1>📦 Доставка Якутск</h1>
+            <div class="user-info" id="userInfo">
+                Загрузка пользователя...
+            </div>
+            <div id="userRole" style="margin-top: 10px;"></div>
         </div>
         
-        <div id="result" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 12px;">
-            Введите трек-номер
+        <!-- Вкладки -->
+        <div class="tabs" id="tabsContainer">
+            <div class="tab active" onclick="switchTab('search')">🔍 Поиск</div>
+            <div class="tab" onclick="switchTab('my')">📦 Мои</div>
+            <div class="tab" onclick="switchTab('operator')">👨‍💼 Оператор</div>
+            <div class="tab" onclick="switchTab('admin')">👑 Админ</div>
+            <div class="tab" onclick="switchTab('status')">📊 Статус</div>
         </div>
         
-        <div style="text-align: center; margin-top: 30px; color: #666;">
-            <p>г. Якутск • Пн-Пт 9:00-18:00</p>
+        <!-- Вкладка 1: Поиск -->
+        <div id="searchTab" class="tab-content active">
+            <div class="card">
+                <h3>🔍 Отследить посылку</h3>
+                <div class="form-group">
+                    <input type="text" id="trackInput" placeholder="Введите трек-номер...">
+                </div>
+                <button class="btn-primary" onclick="searchTrack()">Найти</button>
+                <button class="btn-warning" onclick="clearSearch()">Очистить</button>
+                
+                <div id="searchResult" style="margin-top: 20px;"></div>
+            </div>
+            
+            <div class="card">
+                <h3>📍 Добавить вручную</h3>
+                <div class="form-group">
+                    <input type="text" id="manualTrack" placeholder="Трек-номер">
+                </div>
+                <div class="form-group">
+                    <select id="manualLocation">
+                        <option value="china">Китай 🇨🇳</option>
+                        <option value="ussuriysk">Уссурийск 🇷🇺</option>
+                        <option value="yakutsk">Якутск 🇷🇺</option>
+                    </select>
+                </div>
+                <button class="btn-success" onclick="addManualPackage()">Добавить</button>
+            </div>
+        </div>
+        
+        <!-- Вкладка 2: Мои посылки -->
+        <div id="myTab" class="tab-content">
+            <div class="card">
+                <h3>📦 Мои посылки (<span id="packageCount">0</span>)</h3>
+                <button class="btn-primary" onclick="loadMyPackages()">🔄 Обновить</button>
+                <div id="myPackagesList" class="list" style="margin-top: 15px;">
+                    Загрузка...
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка 3: Оператор -->
+        <div id="operatorTab" class="tab-content">
+            <div class="card">
+                <h3>⚖️ Взвесить посылку</h3>
+                <div class="form-group">
+                    <input type="text" id="weighTrack" placeholder="Трек-номер">
+                </div>
+                <div class="form-group">
+                    <input type="number" id="weighWeight" placeholder="Вес (кг)" step="0.1" min="0.1">
+                </div>
+                <button class="btn-success" onclick="weighPackage()">Взвесить</button>
+            </div>
+            
+            <div class="card">
+                <h3>⏳ Ожидают взвешивания (<span id="pendingCount">0</span>)</h3>
+                <div id="pendingPackages" class="list">
+                    Загрузка...
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>✅ Готовые посылки</h3>
+                <div id="readyPackages" class="list">
+                    Загрузка...
+                </div>
+            </div>
+        </div>
+        
+        <!-- Вкладка 4: Админ -->
+        <div id="adminTab" class="tab-content">
+            <div class="card">
+                <h3>💰 Настройка цен</h3>
+                <div class="form-group">
+                    <label>Китай (₽/кг):</label>
+                    <input type="number" id="priceChina" value="500">
+                </div>
+                <div class="form-group">
+                    <label>Уссурийск (₽/кг):</label>
+                    <input type="number" id="priceUssuriysk" value="300">
+                </div>
+                <div class="form-group">
+                    <label>Якутск (₽/кг):</label>
+                    <input type="number" id="priceYakutsk" value="150">
+                </div>
+                <div class="form-group">
+                    <label>Доп. сбор (₽):</label>
+                    <input type="number" id="priceExtra" value="150">
+                </div>
+                <button class="btn-success" onclick="savePrices()">💾 Сохранить цены</button>
+            </div>
+            
+            <div class="card">
+                <h3>🔄 Управление системой</h3>
+                <button class="btn-warning" onclick="reloadData()">🔄 Обновить данные</button>
+                <button class="btn-primary" onclick="exportData()">📤 Экспорт данных</button>
+                <button class="btn-danger" onclick="clearAllData()">🗑️ Очистить всё</button>
+                
+                <div id="adminStats" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+        
+        <!-- Вкладка 5: Статус системы -->
+        <div id="statusTab" class="tab-content">
+            <div class="card">
+                <h3>📊 Статистика системы</h3>
+                <div id="systemStats">
+                    <p>🕒 <strong>Время:</strong> <span id="currentTime">-</span></p>
+                    <p>👤 <strong>Пользователей:</strong> <span id="userCount">-</span></p>
+                    <p>📦 <strong>Всего посылок:</strong> <span id="totalPackages">-</span></p>
+                    <p>⏳ <strong>Ожидают:</strong> <span id="waitingCount">-</span></p>
+                    <p>✅ <strong>Готовы:</strong> <span id="completedCount">-</span></p>
+                </div>
+                <button class="btn-primary" onclick="updateStats()">🔄 Обновить</button>
+            </div>
+            
+            <div class="card">
+                <h3>📁 Файлы Excel</h3>
+                <div id="fileStatus">
+                    <p>🔍 Проверка файлов...</p>
+                </div>
+                <button class="btn-warning" onclick="checkFiles()">🔍 Проверить файлы</button>
+            </div>
+        </div>
+        
+        <!-- Уведомления -->
+        <div id="notificationArea" style="margin-top: 20px;"></div>
+        
+        <!-- Футер -->
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #666;">
+            <p>📦 Доставка Якутск • г. Якутск • Пн-Пт 9:00-18:00</p>
+            <p style="font-size: 12px;">Версия 1.0 • <span id="version">Загрузка...</span></p>
         </div>
     </div>
 
+    <!-- Основной скрипт -->
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
+        let tg = null;
+        let user = null;
+        let userRole = 'client';
+        let packages = [];
+        let users = [];
+        let prices = {
+            china: 500,
+            ussuriysk: 300,
+            yakutsk: 150,
+            extra: 150
+        };
         
-        const user = tg.initDataUnsafe.user;
-        document.getElementById('userInfo').innerHTML = 
-            `👤 ${user.first_name} ${user.last_name || ''}`;
+        // ID админов и операторов
+        const ADMIN_IDS = [1079406651, 7668402802];
+        const OPERATOR_IDS = [];
         
-        function search() {
-            const track = document.getElementById('trackInput').value;
-            document.getElementById('result').innerHTML = 
-                `🔍 Ищем "${track}"...<br><br>
-                 📍 Якутск<br>
-                 🟡 Ожидает взвешивания<br>
-                 📅 ${new Date().toLocaleDateString('ru-RU')}`;
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // Telegram Web App
+            tg = window.Telegram.WebApp;
+            tg.expand();
+            tg.enableClosingConfirmation();
+            
+            // Получаем данные пользователя
+            user = tg.initDataUnsafe.user;
+            if (user) {
+                document.getElementById('userInfo').innerHTML = 
+                    `👤 ${user.first_name} ${user.last_name || ''}<br><small>ID: ${user.id}</small>`;
+                
+                // Определяем роль
+                if (ADMIN_IDS.includes(user.id)) {
+                    userRole = 'admin';
+                    document.getElementById('userRole').innerHTML = 
+                        '<span style="color: #FF9800; font-weight: bold;">👑 АДМИНИСТРАТОР</span>';
+                } else if (OPERATOR_IDS.includes(user.id)) {
+                    userRole = 'operator';
+                    document.getElementById('userRole').innerHTML = 
+                        '<span style="color: #2196F3; font-weight: bold;">👨‍💼 ОПЕРАТОР</span>';
+                } else {
+                    userRole = 'client';
+                    document.getElementById('userRole').innerHTML = 
+                        '<span style="color: #4CAF50; font-weight: bold;">👤 КЛИЕНТ</span>';
+                }
+                
+                // Скрываем вкладки в зависимости от роли
+                updateTabVisibility();
+                
+                // Загружаем данные
+                loadFromStorage();
+                loadMyPackages();
+                updateStats();
+                updateTime();
+                
+                // Обновляем время каждую минуту
+                setInterval(updateTime, 60000);
+                setInterval(updateStats, 30000);
+            }
+        });
+        
+        // ========== УПРАВЛЕНИЕ ВКЛАДКАМИ ==========
+        function updateTabVisibility() {
+            const tabs = document.getElementById('tabsContainer');
+            const tabElements = tabs.querySelectorAll('.tab');
+            
+            // Скрываем вкладки в зависимости от роли
+            tabElements.forEach(tab => {
+                const tabName = tab.textContent;
+                if (tabName.includes('👨‍💼') && userRole !== 'operator' && userRole !== 'admin') {
+                    tab.style.display = 'none';
+                }
+                if (tabName.includes('👑') && userRole !== 'admin') {
+                    tab.style.display = 'none';
+                }
+            });
         }
+        
+        function switchTab(tabName) {
+            // Скрываем все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Убираем активный класс у всех табов
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Показываем нужную вкладку
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Активируем соответствующий таб
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.textContent.includes(getTabIcon(tabName))) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Обновляем данные при переключении
+            if (tabName === 'my') {
+                loadMyPackages();
+            } else if (tabName === 'operator') {
+                loadPendingPackages();
+                loadReadyPackages();
+            } else if (tabName === 'status') {
+                updateStats();
+            }
+        }
+        
+        function getTabIcon(tabName) {
+            switch(tabName) {
+                case 'search': return '🔍';
+                case 'my': return '📦';
+                case 'operator': return '👨‍💼';
+                case 'admin': return '👑';
+                case 'status': return '📊';
+                default: return '';
+            }
+        }
+        
+        // ========== ПОИСК ПОСЫЛКИ ==========
+        function searchTrack() {
+            const track = document.getElementById('trackInput').value.trim().toUpperCase();
+            if (!track) {
+                showNotification('Введите трек-номер', 'error');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('searchResult');
+            resultDiv.innerHTML = '<div class="alert">🔍 Ищем в базе данных...</div>';
+            
+            // Имитация поиска (можно заменить на реальный API)
+            setTimeout(() => {
+                const locations = ['Китай 🇨🇳', 'Уссурийск 🇷🇺', 'Якутск 🇷🇺'];
+                const statuses = ['ожидает', 'в пути', 'готово'];
+                const randomLoc = locations[Math.floor(Math.random() * locations.length)];
+                const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <h4>✅ ПОСЫЛКА НАЙДЕНА!</h4>
+                        <p><strong>Трек:</strong> ${track}</p>
+                        <p><strong>Место:</strong> ${randomLoc}</p>
+                        <p><strong>Статус:</strong> ${randomStatus}</p>
+                        <p><strong>Дата поиска:</strong> ${new Date().toLocaleString('ru-RU')}</p>
+                        <button class="btn-success" onclick="addPackage('${track}', '${randomLoc}')" style="margin-top: 10px;">
+                            📦 Добавить в мои посылки
+                        </button>
+                    </div>
+                `;
+            }, 1000);
+        }
+        
+        function clearSearch() {
+            document.getElementById('trackInput').value = '';
+            document.getElementById('searchResult').innerHTML = '';
+        }
+        
+        // ========== УПРАВЛЕНИЕ ПОСЫЛКАМИ ==========
+        function addPackage(track, location) {
+            const newPackage = {
+                id: Date.now(),
+                track: track,
+                location: location,
+                owner: user.id,
+                ownerName: user.first_name + ' ' + (user.last_name || ''),
+                status: 'ожидает',
+                weight: null,
+                price: null,
+                addedDate: new Date().toISOString(),
+                weighedDate: null,
+                notes: ''
+            };
+            
+            packages.push(newPackage);
+            saveToStorage();
+            
+            showNotification(`Посылка ${track} добавлена в "Мои посылки"`, 'success');
+            loadMyPackages();
+        }
+        
+        function addManualPackage() {
+            const track = document.getElementById('manualTrack').value.trim().toUpperCase();
+            const location = document.getElementById('manualLocation').value;
+            
+            if (!track) {
+                showNotification('Введите трек-номер', 'error');
+                return;
+            }
+            
+            let locationName = '';
+            switch(location) {
+                case 'china': locationName = 'Китай 🇨🇳'; break;
+                case 'ussuriysk': locationName = 'Уссурийск 🇷🇺'; break;
+                case 'yakutsk': locationName = 'Якутск 🇷🇺'; break;
+            }
+            
+            addPackage(track, locationName);
+            document.getElementById('manualTrack').value = '';
+        }
+        
+        function loadMyPackages() {
+            const userPackages = packages.filter(p => p.owner === user.id);
+            const listDiv = document.getElementById('myPackagesList');
+            const countSpan = document.getElementById('packageCount');
+            
+            countSpan.textContent = userPackages.length;
+            
+            if (userPackages.length === 0) {
+                listDiv.innerHTML = '<div class="alert">📭 У вас нет посылок</div>';
+                return;
+            }
+            
+            listDiv.innerHTML = userPackages.map(pkg => `
+                <div class="list-item status-${pkg.location.includes('Китай') ? 'china' : 
+                                               pkg.location.includes('Уссурийск') ? 'ussuriysk' : 'yakutsk'}">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong>${pkg.track}</strong>
+                        <span class="status ${pkg.status === 'готово' ? 'status-ready' : 'status-waiting'}">
+                            ${pkg.status === 'готово' ? '✅ ГОТОВА' : '🟡 ОЖИДАЕТ'}
+                        </span>
+                    </div>
+                    <p>📍 ${pkg.location}</p>
+                    <p>📅 ${new Date(pkg.addedDate).toLocaleDateString('ru-RU')}</p>
+                    ${pkg.weight ? `<p>⚖️ ${pkg.weight} кг • 💰 ${pkg.price} ₽</p>` : ''}
+                    ${pkg.weighedDate ? `<p><small>Взвешена: ${new Date(pkg.weighedDate).toLocaleString('ru-RU')}</small></p>` : ''}
+                    <div style="margin-top: 10px;">
+                        <button class="btn-primary" style="padding: 5px 10px; font-size: 12px;" 
+                                onclick="viewPackageDetails(${pkg.id})">📋 Детали</button>
+                        ${pkg.status !== 'готово' ? 
+                          `<button class="btn-warning" style="padding: 5px 10px; font-size: 12px;" 
+                                  onclick="markAsReady(${pkg.id})">✅ Готово</button>` : ''}
+                        <button class="btn-danger" style="padding: 5px 10px; font-size: 12px;" 
+                                onclick="deletePackage(${pkg.id})">🗑️ Удалить</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // ========== ФУНКЦИИ ОПЕРАТОРА ==========
+        function loadPendingPackages() {
+            const pending = packages.filter(p => p.status === 'ожидает');
+            const listDiv = document.getElementById('pendingPackages');
+            const countSpan = document.getElementById('pendingCount');
+            
+            countSpan.textContent = pending.length;
+            
+            if (pending.length === 0) {
+                listDiv.innerHTML = '<div class="alert">✅ Нет посылок, ожидающих взвешивания</div>';
+                return;
+            }
+            
+            listDiv.innerHTML = pending.map(pkg => `
+                <div class="list-item">
+                    <strong>${pkg.track}</strong><br>
+                    <small>👤 ${pkg.ownerName}</small><br>
+                    📍 ${pkg.location}<br>
+                    📅 ${new Date(pkg.addedDate).toLocaleDateString('ru-RU')}<br>
+                    <div class="form-group" style="margin-top: 10px;">
+                        <input type="number" id="weight_${pkg.id}" placeholder="Вес (кг)" 
+                               step="0.1" min="0.1" style="width: calc(100% - 90px); display: inline-block;">
+                        <button class="btn-success" onclick="weighSinglePackage(${pkg.id})" 
+                                style="width: 80px; padding: 8px;">Взвесить</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function loadReadyPackages() {
+            const ready = packages.filter(p => p.status === 'готово');
+            const listDiv = document.getElementById('readyPackages');
+            
+            if (ready.length === 0) {
+                listDiv.innerHTML = '<div class="alert">📭 Нет готовых посылок</div>';
+                return;
+            }
+            
+            listDiv.innerHTML = ready.map(pkg => `
+                <div class="list-item status-ready">
+                    <strong>${pkg.track}</strong><br>
+                    <small>👤 ${pkg.ownerName}</small><br>
+                    📍 ${pkg.location}<br>
+                    ⚖️ ${pkg.weight} кг • 💰 ${pkg.price} ₽<br>
+                    📅 ${new Date(pkg.weighedDate).toLocaleDateString('ru-RU')}
+                </div>
+            `).join('');
+        }
+        
+        function weighPackage() {
+            const track = document.getElementById('weighTrack').value.trim().toUpperCase();
+            const weight = parseFloat(document.getElementById('weighWeight').value);
+            
+            if (!track || !weight || weight <= 0) {
+                showNotification('Введите корректные данные', 'error');
+                return;
+            }
+            
+            const pkg = packages.find(p => p.track === track && p.status === 'ожидает');
+            if (!pkg) {
+                showNotification('Посылка не найдена или уже взвешена', 'error');
+                return;
+            }
+            
+            // Расчет цены
+            let pricePerKg = prices.yakutsk;
+            if (pkg.location.includes('Китай')) pricePerKg = prices.china;
+            if (pkg.location.includes('Уссурийск')) pricePerKg = prices.ussuriysk;
+            
+            const price = (weight * pricePerKg) + prices.extra;
+            
+            // Обновляем данные
+            pkg.weight = weight;
+            pkg.price = Math.round(price);
+            pkg.status = 'готово';
+            pkg.weighedDate = new Date().toISOString();
+            
+            saveToStorage();
+            
+            // Очищаем поля
+            document.getElementById('weighTrack').value = '';
+            document.getElementById('weighWeight').value = '';
+            
+            showNotification(`Посылка ${track} взвешена: ${weight} кг, цена: ${Math.round(price)} ₽`, 'success');
+            
+            // Обновляем списки
+            loadPendingPackages();
+            loadReadyPackages();
+            loadMyPackages();
+        }
+        
+        function weighSinglePackage(packageId) {
+            const weightInput = document.getElementById(`weight_${packageId}`);
+            const weight = parseFloat(weightInput.value);
+            
+            if (!weight || weight <= 0) {
+                showNotification('Введите корректный вес', 'error');
+                return;
+            }
+            
+            const pkg = packages.find(p => p.id === packageId);
+            if (!pkg) return;
+            
+            // Расчет цены
+            let pricePerKg = prices.yakutsk;
+            if (pkg.location.includes('Китай')) pricePerKg = prices.china;
+            if (pkg.location.includes('Уссурийск')) pricePerKg = prices.ussuriysk;
+            
+            const price = (weight * pricePerKg) + prices.extra;
+            
+            // Обновляем данные
+            pkg.weight = weight;
+            pkg.price = Math.round(price);
+            pkg.status = 'готово';
+            pkg.weighedDate = new Date().toISOString();
+            
+            saveToStorage();
+            weightInput.value = '';
+            
+            showNotification(`Посылка ${pkg.track} взвешена!`, 'success');
+            
+            // Обновляем списки
+            loadPendingPackages();
+            loadReadyPackages();
+            loadMyPackages();
+        }
+        
+        // ========== ФУНКЦИИ АДМИНА ==========
+        function savePrices() {
+            prices = {
+                china: parseFloat(document.getElementById('priceChina').value) || 500,
+                ussuriysk: parseFloat(document.getElementById('priceUssuriysk').value) || 300,
+                yakutsk: parseFloat(document.getElementById('priceYakutsk').value) || 150,
+                extra: parseFloat(document.getElementById('priceExtra').value) || 150
+            };
+            
+            localStorage.setItem('delivery_prices', JSON.stringify(prices));
+            showNotification('Цены успешно сохранены', 'success');
+        }
+        
+        function reloadData() {
+            // Здесь будет загрузка из Excel файлов
+            showNotification('🔄 Обновление данных...', 'info');
+            
+            setTimeout(() => {
+                showNotification('Данные обновлены (имитация)', 'success');
+                updateStats();
+            }, 1500);
+        }
+        
+        function exportData() {
+            const dataStr = JSON.stringify(packages, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `доставка_данные_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('Данные экспортированы в JSON', 'success');
+        }
+        
+        function clearAllData() {
+            if (confirm('⚠️ ВЫ УВЕРЕНЫ?\n\nЭто удалит ВСЕ данные (посылки, пользователей).')) {
+                packages = [];
+                users = [];
+                localStorage.removeItem('delivery_packages');
+                localStorage.removeItem('delivery_users');
+                
+                showNotification('Все данные очищены', 'success');
+                loadMyPackages();
+                updateStats();
+            }
+        }
+        
+        // ========== СТАТУС СИСТЕМЫ ==========
+        function updateStats() {
+            const total = packages.length;
+            const waiting = packages.filter(p => p.status === 'ожидает').length;
+            const completed = packages.filter(p => p.status === 'готово').length;
+            
+            document.getElementById('totalPackages').textContent = total;
+            document.getElementById('waitingCount').textContent = waiting;
+            document.getElementById('completedCount').textContent = completed;
+            document.getElementById('userCount').textContent = users.length > 0 ? users.length : '1 (текущий)';
+        }
+        
+        function updateTime() {
+            document.getElementById('currentTime').textContent = 
+                new Date().toLocaleTimeString('ru-RU');
+            document.getElementById('version').textContent = 
+                `Последнее обновление: ${new Date().toLocaleTimeString('ru-RU', {hour: '2-digit', minute:'2-digit'})}`;
+        }
+        
+        function checkFiles() {
+            const statusDiv = document.getElementById('fileStatus');
+            
+            // Имитация проверки файлов
+            const fakeFiles = [
+                {name: 'китай_посылки.xlsx', status: '✅ Загружен', rows: '~1500 строк'},
+                {name: 'уссурийск_база.xlsx', status: '✅ Загружен', rows: '~800 строк'},
+                {name: 'якутск_склад.xlsx', status: '✅ Загружен', rows: '~1200 строк'}
+            ];
+            
+            statusDiv.innerHTML = fakeFiles.map(file => `
+                <div style="margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                    <strong>${file.name}</strong><br>
+                    Статус: ${file.status}<br>
+                    Данные: ${file.rows}
+                </div>
+            `).join('');
+        }
+        
+        // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
+        function showNotification(message, type = 'info') {
+            const notificationArea = document.getElementById('notificationArea');
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'error' : 'success'}`;
+            notification.innerHTML = message;
+            
+            notificationArea.appendChild(notification);
+            
+            // Автоудаление через 5 секунд
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        function saveToStorage() {
+            localStorage.setItem('delivery_packages', JSON.stringify(packages));
+            localStorage.setItem('delivery_users', JSON.stringify(users));
+        }
+        
+        function loadFromStorage() {
+            const savedPackages = localStorage.getItem('delivery_packages');
+            const savedUsers = localStorage.getItem('delivery_users');
+            const savedPrices = localStorage.getItem('delivery_prices');
+            
+            if (savedPackages) packages = JSON.parse(savedPackages);
+            if (savedUsers) users = JSON.parse(savedUsers);
+            if (savedPrices) prices = JSON.parse(savedPrices);
+            
+            // Обновляем поля цен в форме админа
+            if (prices) {
+                document.getElementById('priceChina').value = prices.china;
+                document.getElementById('priceUssuriysk').value = prices.ussuriysk;
+                document.getElementById('priceYakutsk').value = prices.yakutsk;
+                document.getElementById('priceExtra').value = prices.extra;
+            }
+        }
+        
+        function viewPackageDetails(packageId) {
+            const pkg = packages.find(p => p.id === packageId);
+            if (!pkg) return;
+            
+            alert(`
+📦 Детали посылки:
+────────────────
+Трек: ${pkg.track}
+Место: ${pkg.location}
+Владелец: ${pkg.ownerName}
+Статус: ${pkg.status}
+Вес: ${pkg.weight || 'не взвешена'} кг
+Цена: ${pkg.price || 'не рассчитана'} ₽
+Добавлена: ${new Date(pkg.addedDate).toLocaleString('ru-RU')}
+Взвешена: ${pkg.weighedDate ? new Date(pkg.weighedDate).toLocaleString('ru-RU') : 'нет'}
+            `);
+        }
+        
+        function markAsReady(packageId) {
+            const pkg = packages.find(p => p.id === packageId);
+            if (!pkg) return;
+            
+            pkg.status = 'готово';
+            pkg.weighedDate = new Date().toISOString();
+            
+            // Авторасчет веса и цены
+            pkg.weight = (Math.random() * 5 + 0.5).toFixed(2);
+            
+            let pricePerKg = prices.yakutsk;
+            if (pkg.location.includes('Китай')) pricePerKg = prices.china;
+            if (pkg.location.includes('Уссурийск')) pricePerKg = prices.ussuriysk;
+            
+            pkg.price = Math.round((parseFloat(pkg.weight) * pricePerKg) + prices.extra);
+            
+            saveToStorage();
+            loadMyPackages();
+            
+            showNotification(`Посылка ${pkg.track} отмечена как готовая`, 'success');
+        }
+        
+        function deletePackage(packageId) {
+            if (confirm('Удалить эту посылку?')) {
+                packages = packages.filter(p => p.id !== packageId);
+                saveToStorage();
+                loadMyPackages();
+                updateStats();
+                showNotification('Посылка удалена', 'success');
+            }
+        }
+        
+        // ========== ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ==========
+        // Уже в DOMContentLoaded
     </script>
 </body>
 </html>
