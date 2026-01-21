@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>📦 Доставка Якутск</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { color: #333; text-align: center; margin-bottom: 20px; }
+        .input-group { display: flex; gap: 10px; margin: 20px 0; }
+        input { flex: 1; padding: 15px; border: 2px solid #ddd; border-radius: 12px; }
+        button { padding: 15px; background: #667eea; color: white; border: none; border-radius: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Доставка Якутск</h1>
+        <div id="userInfo">Загрузка...</div>
+        
+        <div class="input-group">
+            <input type="text" id="trackInput" placeholder="Трек-номер">
+            <button onclick="search()">🔍 Найти</button>
+        </div>
+        
+        <div id="result" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 12px;">
+            Введите трек-номер
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; color: #666;">
+            <p>г. Якутск • Пн-Пт 9:00-18:00</p>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        
+        const user = tg.initDataUnsafe.user;
+        document.getElementById('userInfo').innerHTML = 
+            `👤 ${user.first_name} ${user.last_name || ''}`;
+        
+        function search() {
+            const track = document.getElementById('trackInput').value;
+            document.getElementById('result').innerHTML = 
+                `🔍 Ищем "${track}"...<br><br>
+                 📍 Якутск<br>
+                 🟡 Ожидает взвешивания<br>
+                 📅 ${new Date().toLocaleDateString('ru-RU')}`;
+        }
+    </script>
+</body>
+</html>
