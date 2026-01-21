@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📦 Доставка Якутск</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 ДОСТАВКА ЯКУТСК</h1>
+            <p id="userWelcome">Загрузка...</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('search')">🔍 Поиск</div>
+            <div class="tab" onclick="switchTab('packages')">📦 Мои посылки</div>
+            <div class="tab" onclick="switchTab('profile')">👤 Профиль</div>
+        </div>
+        
+        <div id="searchTab" class="tab-content">
+            <div class="card">
+                <h2>🔍 Поиск посылки</h2>
+                <div class="input-group">
+                    <input type="text" id="trackInput" placeholder="Введите трек-номер...">
+                    <button class="btn btn-primary" onclick="searchTrack()">Найти</button>
+                </div>
+                <div id="searchResults"></div>
+            </div>
+        </div>
+        
+        <div id="packagesTab" class="tab-content" style="display: none;">
+            <div class="card">
+                <h2>📦 Мои посылки</h2>
+                <div id="packagesList">Загрузка...</div>
+            </div>
+        </div>
+        
+        <div id="profileTab" class="tab-content" style="display: none;">
+            <div class="card">
+                <h2>👤 Профиль</h2>
+                <div id="profileInfo">Загрузка...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/search.js"></script>
+    <script src="/static/js/packages.js"></script>
+    <script src="/static/js/profile.js"></script>
+</body>
+</html>
